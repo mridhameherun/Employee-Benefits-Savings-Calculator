@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Benefits Savings Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6238cc;
+            --secondary-color: #1a284d;
+            --text-color: #1f2937;
+            --light-gray: #f3f4f6;
+            --border-color: #e5e7eb;
+            --success-color: #62d0c5;
+        }
+
+        @font-face {
+            font-family: 'Dharma Gothic E Bold';
+            src: url('Dharma Gothic E Bold.otf') format('opentype');
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Plus Jakarta Sans", sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            background-color: #dfdedf;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: slideDown 0.8s ease-out 0.2s both;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h1 {
+            font-family: 'Dharma Gothic E Bold', sans-serif;
+            font-size: 7rem;
+            font-weight: 700;
+            color: var(--text-color);
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 4px;
+            bottom: -10px;
+            left: 0;
+            background-color: var(--primary-color);
+            animation: expandLine 1s ease-out 0.5s forwards;
+        }
+        
+        @keyframes expandLine {
+            to {
+                width: 100%;
+            }
+        }
+        
+        .subtitle {
+            color: #6b7280;
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            animation: fadeIn 1s ease-out 0.7s both;
+        }
+        
+        .calculator-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            animation: slideUp 0.8s ease-out 0.4s both;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        .form-group:nth-child(1) {
+            animation-delay: 0.6s;
+        }
+        
+        .form-group:nth-child(2) {
+            animation-delay: 0.7s;
+        }
+        
+        label {
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        
+        input[type="number"] {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .currency-input {
+            position: relative;
+        }
+        
+        .currency-input::before {
+            content: "£";
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+        }
+        
+        .currency-input input {
+            padding-left: 1.75rem;
+        }
+        
+        .benefits-section {
+            margin-top: 1rem;
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out 0.8s forwards;
+        }
+        
+        .benefits-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            transform: translateX(-10px);
+            opacity: 0;
+            animation: slideIn 0.4s ease-out forwards;
+        }
+        
+        .checkbox-item:nth-child(1) {
+            animation-delay: 0.9s;
+        }
+        
+        .checkbox-item:nth-child(2) {
+            animation-delay: 1s;
+        }
+        
+        .checkbox-item:nth-child(3) {
+            animation-delay: 1.1s;
+        }
+        
+        .checkbox-item:nth-child(4) {
+            animation-delay: 1.2s;
+        }
+        
+        .checkbox-item:nth-child(5) {
+            animation-delay: 1.3s;
+        }
+        
+        @keyframes slideIn {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .checkbox-item:hover {
+            background-color: var(--light-gray);
+            transform: translateX(5px);
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: var(--primary-color);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .checkbox-item input[type="checkbox"]:checked {
+            animation: checkPulse 0.4s ease;
+        }
+        
+        @keyframes checkPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .checkbox-item label {
+            cursor: pointer;
+            margin: 0;
+        }
+        
+        .results-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .savings-box {
+            background-color: var(--light-gray);
+            border-radius: 12px;
+            padding: 1.5rem;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out 1s forwards;
+            transition: transform 0.3s ease;
+        }
+        
+        .savings-box:hover {
+            transform: translateY(-5px);
+        }
+        
+        .savings-title {
+            font-family: 'Dharma Gothic E Bold', sans-serif;
+            font-weight: 600;
+            font-size: 3rem;
+        }
+        
+        .savings-amount {
+            font-family: 'Dharma Gothic E Bold', sans-serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            transition: all 0.5s ease;
+        }
+        
+        .savings-amount.pulse {
+            animation: pulse 0.6s ease;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .savings-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .breakdown-item {
+            font-family: 'Dharma Gothic E Bold', sans-serif;
+            font-size: 2rem;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #d1d5db;
+            opacity: 0;
+            transform: translateX(20px);
+            animation: slideInRight 0.5s ease-out forwards;
+        }
+        
+        .breakdown-item:nth-child(1) {
+            animation-delay: 1.2s;
+        }
+        
+        .breakdown-item:nth-child(2) {
+            animation-delay: 1.3s;
+        }
+        
+        .breakdown-item:nth-child(3) {
+            animation-delay: 1.4s;
+        }
+        
+        .breakdown-item:nth-child(4) {
+            animation-delay: 1.5s;
+        }
+        
+        .breakdown-item:nth-child(5) {
+            animation-delay: 1.6s;
+        }
+        
+        @keyframes slideInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .breakdown-label {
+            font-weight: 500;
+        }
+        
+        .breakdown-value {
+            font-weight: 600;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .breakdown-item:hover .breakdown-value {
+            transform: translateX(5px);
+        }
+        
+        .assumptions {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #4b5563;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out 1.7s forwards;
+        }
+        
+        .assumptions-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .assumptions-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .assumptions-list li {
+            margin-bottom: 0.25rem;
+            position: relative;
+            padding-left: 1.25rem;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .assumptions-list li:nth-child(1) {
+            animation-delay: 1.8s;
+        }
+        
+        .assumptions-list li:nth-child(2) {
+            animation-delay: 1.9s;
+        }
+        
+        .assumptions-list li:nth-child(3) {
+            animation-delay: 2s;
+        }
+        
+        .assumptions-list li:nth-child(4) {
+            animation-delay: 2.1s;
+        }
+        
+        .assumptions-list li:nth-child(5) {
+            animation-delay: 2.2s;
+        }
+        
+        .assumptions-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--secondary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .calculator-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 3.5rem;
+                font-weight: 700;
+                line-height: 1.2;
+            }
+            
+            .savings-amount {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Employee Benefits Savings Calculator</h1>
+            <p class="subtitle">Calculate potential annual savings with our benefits package</p>
+        </header>
+        <div class="calculator-container">
+            <div class="input-section">
+                <div class="form-group">
+                    <label for="numEmployees">Number of Employees</label>
+                    <input type="number" id="numEmployees" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="avgSalary">Average Salary</label>
+                    <div class="currency-input">
+                        <input type="number" id="avgSalary" min="0" value="0">
+                    </div>
+                </div>
+                <div class="benefits-section">
+                    <h3 class="benefits-title">Select Benefits:</h3>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="pension">
+                            <label for="pension">Pension Scheme</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="bonus">
+                            <label for="bonus">Bonus Sacrifice</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="electric">
+                            <label for="electric">Electric Vehicles</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="holiday">
+                            <label for="holiday">Buy Holiday</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="wellbeing">
+                            <label for="wellbeing">Financial Wellbeing</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="results-section">
+                <div class="savings-box">
+                    <h3 class="savings-title">Potential Annual Savings</h3>
+                    <div class="savings-amount" id="totalSavings">£0</div>
+                    
+                    <div class="savings-breakdown">
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Pensions</span>
+                            <span class="breakdown-value" id="pensionAmount">£0</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Bonus Sacrifice</span>
+                            <span class="breakdown-value" id="bonusAmount">£0</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Electric Vehicles</span>
+                            <span class="breakdown-value" id="electricAmount">£0</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Buy Holiday</span>
+                            <span class="breakdown-value" id="holidayAmount">£0</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Financial Wellbeing</span>
+                            <span class="breakdown-value" id="wellbeingAmount">£0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="assumptions">
+                    <h4 class="assumptions-title">Assumptions</h4>
+                    <ul class="assumptions-list">
+                        <li>Pension savings based on 5% employer contribution</li>
+                        <li>Bonus sacrifice assumes 30% of annual salary</li>
+                        <li>Electric vehicle savings include tax benefits</li>
+                        <li>Holiday buy-back calculated at £1 per employee</li>
+                        <li>Financial wellbeing based on reduced absenteeism</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Function to animate numbers
+        function animateValue(element, start, end, duration) {
+            // Ensure we have valid numbers
+            start = isNaN(start) ? 0 : start;
+            end = isNaN(end) ? 0 : end;
+            
+            // If start and end are the same, just set the value and return
+            if (start === end) {
+                element.textContent = `£${Math.round(end).toLocaleString()}`;
+                return;
+            }
+            
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+            
+            // Clear any existing interval
+            if (element.animationInterval) {
+                clearInterval(element.animationInterval);
+            }
+            
+            // Set the initial value
+            element.textContent = `£${Math.round(start).toLocaleString()}`;
+            
+            // Create a new interval
+            element.animationInterval = setInterval(() => {
+                current += increment;
+                
+                // Check if we've reached or passed the end value
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    current = end;
+                    clearInterval(element.animationInterval);
+                    element.animationInterval = null;
+                }
+                
+                // Update the text with the current value
+                element.textContent = `£${Math.round(current).toLocaleString()}`;
+            }, 16);
+        }
+
+        // Function to calculate savings
+        function calculateSavings() {
+            // Get input values
+            const numEmployees = parseInt(document.getElementById('numEmployees').value) || 0;
+            const avgSalary = parseInt(document.getElementById('avgSalary').value) || 0;
+            
+            // Get checkbox states
+            const pensionChecked = document.getElementById('pension').checked;
+            const bonusChecked = document.getElementById('bonus').checked;
+            const electricChecked = document.getElementById('electric').checked;
+            const holidayChecked = document.getElementById('holiday').checked;
+            const wellbeingChecked = document.getElementById('wellbeing').checked;
+            
+            // Calculate savings for each benefit
+            let pensionSavings = 0;
+            let bonusSavings = 0;
+            let electricSavings = 0;
+            let holidaySavings = 0;
+            let wellbeingSavings = 0;
+            
+            if (pensionChecked && numEmployees > 0) {
+                // Pension savings: 5% of salary per employee
+                pensionSavings = Math.round(numEmployees * avgSalary * 0.05);
+            }
+            
+            if (bonusChecked) {
+                // Bonus sacrifice: 30% of salary per employee
+                bonusSavings = Math.round(numEmployees * avgSalary * 0.30);
+            }
+            
+            if (electricChecked) {
+                // Electric vehicles: £54 per employee
+                electricSavings = numEmployees * 54;
+            }
+
+            if (holidayChecked) {
+                // Buy holiday: £1 per employee
+                holidaySavings = numEmployees * 1;
+            }
+
+            if (wellbeingChecked) {
+                // Financial wellbeing: £19.1 per employee
+                wellbeingSavings = Math.round(numEmployees * 19.1);
+            }
+            
+            // Calculate total savings
+            const totalSavings = pensionSavings + bonusSavings + electricSavings + holidaySavings + wellbeingSavings;
+            
+            // Get current values for animation
+            const totalElement = document.getElementById('totalSavings');
+            const currentTotal = parseInt(totalElement.textContent.replace(/[^0-9]/g, '')) || 0;
+            
+            // Add pulse animation to total savings
+            totalElement.classList.remove('pulse');
+            void totalElement.offsetWidth; // Trigger reflow
+            totalElement.classList.add('pulse');
+            
+            // Animate total savings
+            animateValue(totalElement, currentTotal, totalSavings, 500);
+            
+            // Update individual savings with animation
+            animateValue(
+                document.getElementById('pensionAmount'),
+                parseInt(document.getElementById('pensionAmount').textContent.replace(/[^0-9]/g, '')) || 0,
+                pensionSavings,
+                400
+            );
+            
+            animateValue(
+                document.getElementById('bonusAmount'),
+                parseInt(document.getElementById('bonusAmount').textContent.replace(/[^0-9]/g, '')) || 0,
+                bonusSavings,
+                400
+            );
+            
+            animateValue(
+                document.getElementById('electricAmount'),
+                parseInt(document.getElementById('electricAmount').textContent.replace(/[^0-9]/g, '')) || 0,
+                electricSavings,
+                400
+            );
+            
+            animateValue(
+                document.getElementById('holidayAmount'),
+                parseInt(document.getElementById('holidayAmount').textContent.replace(/[^0-9]/g, '')) || 0,
+                holidaySavings,
+                400
+            );
+            
+            animateValue(
+                document.getElementById('wellbeingAmount'),
+                parseInt(document.getElementById('wellbeingAmount').textContent.replace(/[^0-9]/g, '')) || 0,
+                wellbeingSavings,
+                400
+            );
+        }
+        
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listeners for real-time updates
+            document.getElementById('numEmployees').addEventListener('input', calculateSavings);
+            document.getElementById('avgSalary').addEventListener('input', calculateSavings);
+            document.getElementById('pension').addEventListener('change', calculateSavings);
+            document.getElementById('bonus').addEventListener('change', calculateSavings);
+            document.getElementById('electric').addEventListener('change', calculateSavings);
+            document.getElementById('holiday').addEventListener('change', calculateSavings);
+            document.getElementById('wellbeing').addEventListener('change', calculateSavings);
+            
+            // Initial calculation
+            calculateSavings();
+        });
+    </script>
+</body>
+</html>
